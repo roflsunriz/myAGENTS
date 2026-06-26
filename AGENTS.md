@@ -72,14 +72,16 @@
 ## 更新手順
 
 - 更新手順は原則として `how-to-update.md` にまとめる。
+- 常に日本語で記載する。他の言語で書かれている場合は日本語に書き直す。
 - プロジェクトで `docs/UPDATE.md` を使っている場合は、それを正式な更新手順として扱ってよい。
-- どちらも存在しない場合は、作業中に判明した更新手順を `how-to-update.md` または `docs/UPDATE.md` として作成する。
+- どちらも存在しない場合は、作業中に判明した更新手順を `how-to-update.md` に作成する。
 - 更新手順には、必要な前提、実行コマンド、検証方法、ロールバックまたは復旧方針を含める。
 
 ## 変更履歴
 
 - 変更点は `CHANGELOG.md` に記載する。
 - 書式は Keep a Changelog に従う。
+- 常に日本語で記載する。他の言語で書かれている場合は日本語に書き直す。
 - 日付は `YYYY-MM-DD` 形式で記載する。
 - 未リリースの変更は `## [Unreleased]` に集約する。
 - 種別は必要に応じて `Added`、`Changed`、`Deprecated`、`Removed`、`Fixed`、`Security` を使う。
@@ -123,8 +125,26 @@ TypeScript ではないプロジェクトでは、言語と構成に応じて次
 ## ブラウザ検証
 
 - Chrome を使う検証では `C:\Users\UserName\Documents\chrome-debug.ps1` で起動し、raw CDP で通信する。既定ではポート 9222 で待ち受ける。
+- `chrome-debug.ps1` にアクセスできない場合は以下を実行する。
+```powershell
+$Chrome = "C:\Program Files\Google\Chrome\Application\chrome.exe"
+$Profile = "$env:TEMP\chrome-remote-debug-profile"
+
+Stop-Process -Name chrome -Force -ErrorAction SilentlyContinue
+
+& $Chrome `
+  --remote-debugging-port=9222 `
+  --user-data-dir="$Profile" `
+  --no-first-run `
+  --no-default-browser-check `
+  --url "https://www.google.com/"
+```
 - DOM、レイアウト、ブラウザ挙動は推測ベースで判断せず、可能な限り CDP による実測・検証ベースで進める。
 - 同じディレクトリに `firefox-debug.ps1` もあり、RDP は既定で 6000 ポート、Marionette も使用できる。
+- `firefox-debug.ps1` にアクセスできない場合は以下を実行する。
+```powershell
+& "C:\Program Files\Mozilla Firefox\firefox.exe" -start-debugger-server 6000 --marionette
+```
 - ユーザーは基本的に Firefox を好むため、ユーザー操作中の Firefox と衝突しないように注意する。Firefox を使う検証はプロファイル、ポート、既存プロセスへの影響を確認してから行う。
 - CDP、RDP、Marionette などの検証手段は内部作業の詳細であり、ユーザー向け README、説明文、UI テキスト、リリースノート、生成スクリプトのユーザー向け出力には不要に記載しない。
 - 例として「CDP検証済みのDOMで非表示」のような実装者都合の説明は、内部文書以外には書かない。
