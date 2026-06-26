@@ -13,3 +13,4 @@
 - 共通ルールの更新手順をまとめた `how-to-update.md` を追加。
 - 各リポジトリに `COMMON-AGENTS.md` シンボリックリンクを作成する `scripts/New-CommonAgentsLink.ps1` を追加。
 - `COMMON-AGENTS.md` を Git 管理外にする `.gitignore` を追加。
+- ケバブケース命名と `any` 回避を共通の実装方針として追加。
