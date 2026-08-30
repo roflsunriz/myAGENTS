@@ -462,6 +462,7 @@ TypeScript ではないプロジェクトでは、言語と構成に応じて次
 ## ブラウザ検証
 
 - Chrome を使う検証では Google Chromeを起動し raw CDP で通信する。
+- `%USERPROFILE%\Documents\chrome-debug.ps1`または`firefox-debug.ps1`を使用してよい
 - DOM、レイアウト、ブラウザ挙動は推測ベースで判断せず、可能な限り CDP による実測・検証ベースで進める。
 - Firefox での RDP / Marionette による検証も可能だが、後述の注意が必要。 
 - ユーザーのメインブラウザは Firefox であるため、ユーザー操作中の Firefox と衝突する危険性がある。ユーザーが操作中の Firefox と競合せず分離可能な方法であれば無断で検証をしてもよい。
