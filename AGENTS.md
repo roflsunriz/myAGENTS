@@ -381,7 +381,18 @@ Draft PRは未完成の放棄を許可する状態ではない。PRは成果物�
 
 ## ReVanced
 - リリースワークフローに`patches.json`を出力するように含める
+- `patches.json`が要求するのはReVanced API形式のJSON。
 - 過去から現在までのすべてのリリースをチェックして`patches.json`が無い場合は昇格したGithub CLIでリリースに`patches.json`を含める
+- `README.md`に`patches.json`のURLをコピーできる形で含める(github.comではなく実体を指すもの)
+- RVPにAndroid用.class DEXを含める。EmptyMultiDexContainerExceptionにしない。
+- Android ReVanced Managerで実際にRVPを適用しインストール直前まで進めることを確認する（インストールにはユーザーの承認が必要）
+- Android ReVanced Managerにpatches.jsonを登録して実際にエラーなしで読めることを確認する。
+- 実機とリポジトリに不要な中間生成物を残さない。
+- 実機で検証する
+- バージョンに依存せず適用可能なこと・使用可能なことを確認する
+- `*-apks`フォルダに検証用の複数世代apk, xapk, apkm, apks, またはその他のファイルがある。(*部分はアプリの名前)
+- `*-apks`にAPKMirror, APKPure, UpToDown等からAPKを直接ダウンロードし保管する
+- PCでは`APKEditor`等, Androidでは`Anti Split M`で単一APKを作成しAndroid ReVanced ManagerでRVPを適用できる。
 
 ## 更新手順
 
@@ -394,6 +405,7 @@ Draft PRは未完成の放棄を許可する状態ではない。PRは成果物�
 ## ドキュメント
 - 検証手順と対策を`verification.md`にまとめる
 - `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, `SECURITY.md`, `SUPPORT.md`を追加する
+- READMEは利用者の使用開始目線でまとめる。開発者向けは後半にまとめる。
 
 ## Github Actions
 - リリースワークフローを整備する
