@@ -393,7 +393,7 @@ Draft PRは未完成の放棄を許可する状態ではない。PRは成果物�
 
 ## ドキュメント
 - 検証手順と対策を`verification.md`にまとめる
-- `CODE_OF_CONDUCT.md`, `CONTIBUTING.md`, `SECURITY.md`, `SUPPORT.md`を追加する
+- `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, `SECURITY.md`, `SUPPORT.md`を追加する
 
 ## Github Actions
 - リリースワークフローを整備する
