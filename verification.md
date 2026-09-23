@@ -20,7 +20,7 @@
 4. CI 失敗は初回だけ failed jobs を再実行する。決定的な修復を有効にした場合は、再失敗後に読み取り権限のジョブでパッチを作り、指定された通常ファイルだけがコミットされること、古い SHA は push しないこと、修復後の `workflow_dispatch` が返す run ID の CI 成功を直接確認してからマージすることを確認する。再実行と限定修復で直らないコード・API 互換性問題は PR を残して調査する。
 5. `GITHUB_TOKEN` によるマージでは通常の `push` 起点ワークフローが起動しないため、呼び出し側で必要なデプロイ workflow に `workflow_dispatch` を追加し、`post_merge_workflows` から起動されることを確認する。
 
-2026-09-23 に actionlint 1.7.12 と ShellCheck 0.11.0 を全ワークフローへ実行した。`process-classified` の模擬 GitHub API では、資格状態と CI 成功が揃う場合だけマージし、古い head SHA と失敗チェックではマージしないことを確認した。[共通 CI](https://github.com/roflsunriz/myAGENTS/actions/runs/35811234755) は成功した。実 PR では [CostCalculator #8](https://github.com/roflsunriz/CostCalculator/pull/8) が `github-actions[bot]` によりマージされた。分類後 `workflow_dispatch` の経路は、追加後に対象 PR の同期がまだ発生していないため実行結果を待つ。
+2026-09-23 に actionlint 1.7.12 と ShellCheck 0.11.0 を全ワークフローへ実行した。`process-classified` の模擬 GitHub API では、資格状態と CI 成功が揃う場合だけマージし、古い head SHA と失敗チェックではマージしないことを確認した。[共通 CI](https://github.com/roflsunriz/myAGENTS/actions/runs/35811234755) は成功した。実 PR では [CostCalculator #8](https://github.com/roflsunriz/CostCalculator/pull/8) が `github-actions[bot]` によりマージされた。分類後の [NyTweetDeck の workflow_dispatch](https://github.com/roflsunriz/NyTweetDeck/actions/runs/35813880729) も実際に起動し、CI が未完了の PR をマージせず待機した。CI 成功後の callback 単独マージは対象 PR 発生時に確認する。
 
 ## サブエージェント指針の内容確認
 
