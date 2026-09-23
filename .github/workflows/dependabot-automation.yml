@@ -105,7 +105,7 @@ jobs:
           fi
 
           policy=
-          for attempt in 1 2 3 4 5; do
+          for _ in 1 2 3 4 5; do
             policy=$(gh api "repos/$GITHUB_REPOSITORY/commits/$RUN_SHA/status" \
               --jq '[.statuses[] | select(.context == "dependabot/auto-merge-eligible")][0].state // ""')
             [ "$policy" = success ] && break
@@ -285,7 +285,7 @@ jobs:
               -f "ref=$RUN_BRANCH" -F return_run_details=true)
             run_id=$(jq -er '.workflow_run_id' <<< "$dispatched")
             completed=false
-            for attempt in $(seq 1 120); do
+            for _ in $(seq 1 120); do
               run=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run_id")
               run_sha=$(jq -r '.head_sha' <<< "$run")
               [ "$run_sha" = "$new_sha" ] || exit 1
