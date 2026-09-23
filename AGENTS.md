@@ -447,6 +447,7 @@ OpenAI 利用時の確認先は、[モデルと推論設定](https://learn.chatg
 - リリースワークフローはCHANGELOG.mdの該当バージョンを自動抜き出して本文に掲載するワークフローにする
 - Pull RequestテンプレートとIssueテンプレート(bug-report, config, documentation)、Discussionテンプレート(general, ideas, q-a)を整備する
 - Dependabot.ymlとlabeler.ymlを整備する
+- DependabotのPullRequestを自動処理するGithub Actionsを整備する。CIが通れば自動マージする。CIが失敗してもGithub Copilotを使わない範囲で自動resolveしてマージする。
 
 ## 変更履歴
 
