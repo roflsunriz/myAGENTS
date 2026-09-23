@@ -26,9 +26,16 @@
 3. 共通ルールには選択・再確認の手順を残し、特定モデルの価格順位、役割、後継モデル、推論強度の序列を固定しない。実数による比較が必要なら、提供元・モデル ID・課金条件・確認日・出典を利用先の記録に添える。
 4. README の案内と変更履歴をそろえ、[検証手順](verification.md#サブエージェント指針の内容確認) の判断例を確認する。このリポジトリでルール改定の根拠を確認した日付と要点は `verification.md` に記録し、価格表の複製を作らない。
 
+## Dependabot 自動処理を更新する場合
+
+1. `.github/workflows/dependabot-automation.yml` の変更前に、GitHub の Dependabot PR、`pull_request_target`、`workflow_run`、`GITHUB_TOKEN` の現行仕様を公式資料で確認する。
+2. PR のコードを実行するジョブに書き込み権限を与えず、PR 作成者・head リポジトリ・head SHA・更新種別・CI 結果の照合を維持する。決定的な自動修復を有効にする場合は、コミット可能な生成物パスを完全一致で限定し、修復後の再検証 workflow に秘密情報や書き込み権限が露出しないことを監査する。CI 名は各利用リポジトリの実際の workflow 名に合わせる。
+3. [検証手順](verification.md#dependabot-自動処理) で Action の構文と判定を確認し、このリポジトリへコミット・push する。利用リポジトリの呼び出し先コミット SHA を新しい値に更新し、各 PR CI とマージ後に必要なデプロイ経路を確認する。
+4. 不具合時は利用リポジトリ側の呼び出し先 SHA を直前の検証済みコミットへ戻す。自動マージされた PR のソース変更が問題なら、通常の revert コミットで戻し、依存更新の原因を確認する。
+
 ## 検証
 
-共通ルールと文書のみの変更では、[検証手順](verification.md) に従い、Markdown の内容、参照先、利用手順と Git 差分を確認する。PowerShell スクリプトを変更する場合は、構文と対象環境での動作も確認する。
+共通ルールと文書のみの変更では、[検証手順](verification.md) に従い、Markdown の内容、参照先、利用手順と Git 差分を確認する。PowerShell スクリプトを変更する場合は、構文と対象環境での動作も確認する。GitHub Actions の変更は actionlint で検証する。
 
 ```powershell
 git diff --check
