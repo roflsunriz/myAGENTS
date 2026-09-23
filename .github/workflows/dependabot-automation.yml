@@ -123,9 +123,7 @@ jobs:
             . as $checks |
             all($names[]; . as $name |
               any($checks[]; .workflow == $name and .bucket == "pass")) and
-            all($checks[];
-              (.workflow as $workflow | $names | index($workflow)) == null or
-              (.bucket == "pass" or .bucket == "skipping"))
+            all($checks[]; .bucket == "pass" or .bucket == "skipping")
           ' <<< "$checks" >/dev/null; then
             echo 'One or more expected PR CI checks are missing, pending, or failed.'
             exit 0
@@ -147,6 +145,7 @@ jobs:
        github.event.workflow_run.event == 'workflow_dispatch') &&
       github.event.workflow_run.conclusion == 'failure' &&
       github.event.workflow_run.run_attempt > 1 &&
+      contains(fromJSON(inputs.ci_workflows), github.event.workflow_run.name) &&
       inputs.autofix_command != ''
     runs-on: ubuntu-latest
     timeout-minutes: 15
