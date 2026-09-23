@@ -555,7 +555,7 @@ TypeScript ではないプロジェクトでは、言語と構成に応じて次
 - CIが失敗しているなら原因を特定し修正しマージ
 - 不要リモートブランチが残っているなら削除
 - mainブランチに統合
-- 原則としてOpen PRは（依存関係解決後マージする予定であっても）放置せず`@dependabot ignore this major version`や`@dependabot ignore this minor version`等でcloseする。アップデートできる段階になって該当PRを再度開く。
+- 原則として作業した結果、解決できずOpenのPRは（依存関係解決後マージする予定であっても）放置せず`@dependabot ignore this major version`や`@dependabot ignore this minor version`等でcloseする。アップデートできる段階になって該当PRを再度開く。
 
 ## その他
 - GitHub CLIやnpm CLIなど認証情報が必要なコマンドは原則昇格して使うこと。昇格なしで使うとサンドボックスの制限により「認証トークンが失効している」という実行結果になる。
