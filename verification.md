@@ -16,6 +16,7 @@
    このリポジトリの `CI` では、SHA-256 を照合した公式 actionlint 配布物で全ワークフローを検証する。
 2. 呼び出し側の `ci_workflows` が PR で実行される workflow の表示名と一致し、すべての対象チェックが成功する前にはマージしないことを確認する。CI がないリポジトリには自動マージを設定しない。
 3. 署名済み Dependabot の patch／minor は対象 SHA に資格状態を付け、major、別リポジトリの head、人間が作った PR は資格状態を付けないことを確認する。
+   CI 完了より分類が遅れた場合は `workflow_dispatch` で同じ PR 番号と head SHA を再確認し、古い SHA や別の作成者を拒否する。
 4. CI 失敗は初回だけ failed jobs を再実行する。決定的な修復を有効にした場合は、再失敗後に読み取り権限のジョブでパッチを作り、指定された通常ファイルだけがコミットされること、古い SHA は push しないこと、修復後の `workflow_dispatch` が返す run ID の CI 成功を直接確認してからマージすることを確認する。再実行と限定修復で直らないコード・API 互換性問題は PR を残して調査する。
 5. `GITHUB_TOKEN` によるマージでは通常の `push` 起点ワークフローが起動しないため、呼び出し側で必要なデプロイ workflow に `workflow_dispatch` を追加し、`post_merge_workflows` から起動されることを確認する。
 

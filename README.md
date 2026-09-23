@@ -82,7 +82,7 @@ Three.js または Blender で参照画像から制作するときは、作業�
 
 このリポジトリ自身は `.github/dependabot.yml` で GitHub Actions の更新を監視し、`.github/workflows/ci.yml` で actionlint を検証値付きの公式配布物から実行します。`.github/workflows/dependabot-pr.yml` が共通ワークフローを固定 SHA で呼び出します。
 
-呼び出し側ではこのワークフローをコミット SHA に固定し、`pull_request_target` と PR 用 CI の `workflow_run` から呼び出します。書き込み権限を持つ処理では PR のコードを実行せず、PR 作成者、リポジトリ、head SHA、Dependabot メタデータと CI 結果を検証します。修復後は `workflow_dispatch` の戻り値にある run ID を直接追跡して CI 成功を確認します。具体的な呼び出し設定、CI 名、マージ後のデプロイ起動は各リポジトリで管理します。
+呼び出し側ではこのワークフローをコミット SHA に固定し、`pull_request_target` と PR 用 CI の `workflow_run` から呼び出します。分類が CI より遅れた場合も、分類後に呼び出し側の `workflow_dispatch` で同じ head SHA を再確認します。書き込み権限を持つ処理では PR のコードを実行せず、PR 作成者、リポジトリ、head SHA、Dependabot メタデータと CI 結果を検証します。修復後は `workflow_dispatch` の戻り値にある run ID を直接追跡して CI 成功を確認します。具体的な呼び出し設定、CI 名、マージ後のデプロイ起動は各リポジトリで管理します。
 
 指針の変更は [更新手順](how-to-update.md) に従い、[検証手順](verification.md) で文書と利用経路の整合を確認します。
 

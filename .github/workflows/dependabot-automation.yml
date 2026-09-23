@@ -7,6 +7,10 @@ on:
         description: JSON array of PR CI workflow display names that must pass
         required: true
         type: string
+      callback_workflow_file:
+        description: Caller workflow filename to recheck after classification
+        required: true
+        type: string
       post_merge_workflows:
         description: JSON array of workflow filenames to dispatch after merge
         required: false
@@ -36,6 +40,7 @@ jobs:
       github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     permissions:
+      actions: write
       pull-requests: read
       statuses: write
     steps:
@@ -50,11 +55,17 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PR_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          CALLBACK_WORKFLOW_FILE: ${{ inputs.callback_workflow_file }}
         run: |
           gh api --method POST "repos/$GITHUB_REPOSITORY/statuses/$PR_SHA" \
             -f state=success \
             -f context=dependabot/auto-merge-eligible \
             -f description='Verified Dependabot patch or minor update' >/dev/null
+          gh workflow run "$CALLBACK_WORKFLOW_FILE" \
+            --repo "$GITHUB_REPOSITORY" --ref "$BASE_REF" \
+            -f "pr_number=$PR_NUMBER" -f "head_sha=$PR_SHA"
 
   process-ci:
     if: >-
@@ -105,11 +116,11 @@ jobs:
           fi
 
           policy=
-          for _ in 1 2 3 4 5; do
+          for _ in 1 2 3; do
             policy=$(gh api "repos/$GITHUB_REPOSITORY/commits/$RUN_SHA/status" \
               --jq '[.statuses[] | select(.context == "dependabot/auto-merge-eligible")][0].state // ""')
             [ "$policy" = success ] && break
-            sleep 10
+            sleep 5
           done
           if [ "$policy" != success ]; then
             echo 'This commit has no verified patch/minor eligibility status.'
@@ -131,6 +142,69 @@ jobs:
           gh pr merge "$pr" --repo "$GITHUB_REPOSITORY" \
             --squash --match-head-commit "$RUN_SHA"
 
+          while IFS= read -r workflow; do
+            [ -z "$workflow" ] && continue
+            gh workflow run "$workflow" --repo "$GITHUB_REPOSITORY" \
+              --ref "$GITHUB_REF_NAME"
+          done < <(jq -r '.[]' <<< "$POST_MERGE_WORKFLOWS")
+
+  process-classified:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      actions: write
+      contents: write
+      pull-requests: write
+      statuses: read
+    steps:
+      - name: Merge only the current verified PR after CI
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.inputs.pr_number }}
+          PR_SHA: ${{ github.event.inputs.head_sha }}
+          CI_WORKFLOWS: ${{ inputs.ci_workflows }}
+          POST_MERGE_WORKFLOWS: ${{ inputs.post_merge_workflows }}
+        run: |
+          set -euo pipefail
+          [[ "$PR_NUMBER" =~ ^[0-9]+$ && "$PR_SHA" =~ ^[0-9a-f]{40}$ ]] || exit 1
+          pr_json=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER")
+          jq -e --arg repo "$GITHUB_REPOSITORY" --arg sha "$PR_SHA" \
+            --arg base "$GITHUB_REF_NAME" \
+            '.state == "open" and .user.login == "dependabot[bot]" and
+             .head.repo.full_name == $repo and .head.sha == $sha and .base.ref == $base' \
+            <<< "$pr_json" >/dev/null || exit 0
+          policy=$(gh api "repos/$GITHUB_REPOSITORY/commits/$PR_SHA/status" \
+            --jq '[.statuses[] | select(.context == "dependabot/auto-merge-eligible")][0].state // ""')
+          [ "$policy" = success ] || exit 0
+
+          ready=false
+          for _ in 1 2 3 4 5 6; do
+            checks=$(gh pr checks "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" \
+              --json name,bucket,workflow || true)
+            if [ -n "$checks" ] && jq -e --argjson names "$CI_WORKFLOWS" '
+              . as $checks |
+              all($names[]; . as $name |
+                any($checks[]; .workflow == $name and .bucket == "pass")) and
+              all($checks[]; .bucket == "pass" or .bucket == "skipping")
+            ' <<< "$checks" >/dev/null; then
+              ready=true
+              break
+            fi
+            sleep 10
+          done
+          [ "$ready" = true ] || {
+            echo 'CI is not yet fully green; workflow_run will recheck it.'
+            exit 0
+          }
+
+          if ! gh pr merge "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" \
+            --squash --match-head-commit "$PR_SHA"; then
+            merged=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" \
+              --jq '.merged')
+            [ "$merged" = true ] && exit 0
+            exit 1
+          fi
           while IFS= read -r workflow; do
             [ -z "$workflow" ] && continue
             gh workflow run "$workflow" --repo "$GITHUB_REPOSITORY" \
