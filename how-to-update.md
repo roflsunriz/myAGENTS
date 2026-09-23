@@ -29,8 +29,8 @@
 ## Dependabot 自動処理を更新する場合
 
 1. `.github/workflows/dependabot-automation.yml` の変更前に、GitHub の Dependabot PR、`pull_request_target`、`workflow_run`、`GITHUB_TOKEN` の現行仕様を公式資料で確認する。
-2. PR のコードを実行するジョブに書き込み権限を与えず、PR 作成者・head リポジトリ・head SHA・更新種別・CI 結果の照合を維持する。決定的な自動修復を有効にする場合は、コミット可能な生成物パスを完全一致で限定し、修復後の再検証 workflow に秘密情報や書き込み権限が露出しないことを監査する。CI 名は各利用リポジトリの実際の workflow 名に合わせる。
-3. [検証手順](verification.md#dependabot-自動処理) で Action の構文と判定を確認し、このリポジトリへコミット・push する。利用リポジトリの呼び出し先コミット SHA を新しい値に更新し、各 PR CI とマージ後に必要なデプロイ経路を確認する。
+2. PR のコードを実行するジョブに書き込み権限を与えず、PR 作成者・head リポジトリ・head SHA・更新種別・CI 結果の照合を維持する。決定的な自動修復を有効にする場合は、コミット可能な生成物パスを完全一致で限定し、修復後の再検証 workflow に秘密情報や書き込み権限が露出しないことを監査する。`GITHUB_TOKEN` が起動した `workflow_dispatch` の後続 `workflow_run` に依存せず、返された run ID を直接待つ。CI 名は各利用リポジトリの実際の workflow 名に合わせる。
+3. [検証手順](verification.md#dependabot-自動処理) で Action の構文と判定を確認し、このリポジトリ自身の `CI` も成功させてからコミット・push する。利用リポジトリの呼び出し先コミット SHA を新しい値に更新し、各 PR CI とマージ後に必要なデプロイ経路を確認する。
 4. 不具合時は利用リポジトリ側の呼び出し先 SHA を直前の検証済みコミットへ戻す。自動マージされた PR のソース変更が問題なら、通常の revert コミットで戻し、依存更新の原因を確認する。
 
 ## 検証
