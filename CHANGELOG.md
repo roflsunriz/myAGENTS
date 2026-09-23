@@ -6,6 +6,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- CI と Dependabot の分類の実行順が前後しても更新を取りこぼさないよう、同じ PR 番号と head SHA を再照合する経路を追加した。
+
 ### Changed
 
 - 大量の Dependabot PR が同時に作られても CI 完了より分類が遅れた更新を取りこぼさないよう、分類後の `workflow_dispatch` で同じ head SHA と全 PR チェックを再照合する経路を追加した。
