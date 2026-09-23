@@ -14,6 +14,6 @@ jobs:
       contents: write
       pull-requests: write
       statuses: write
-    uses: roflsunriz/myAGENTS/.github/workflows/dependabot-automation.yml@de993f985ad3d2673332b07122fa17d2c235ff8f
+    uses: roflsunriz/myAGENTS/.github/workflows/dependabot-automation.yml@021f4942f60d406da553a483f2a398e5a58fc94c
     with:
       ci_workflows: '["CI"]'
