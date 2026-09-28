@@ -48,10 +48,11 @@ jobs:
         id: metadata
         uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3
 
-      - name: Mark patch or minor update eligible
+      - name: Mark Dependabot version update eligible
         if: >-
           steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
-          steps.metadata.outputs.update-type == 'version-update:semver-minor'
+          steps.metadata.outputs.update-type == 'version-update:semver-minor' ||
+          steps.metadata.outputs.update-type == 'version-update:semver-major'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_SHA: ${{ github.event.pull_request.head.sha }}
@@ -62,7 +63,7 @@ jobs:
           gh api --method POST "repos/$GITHUB_REPOSITORY/statuses/$PR_SHA" \
             -f state=success \
             -f context=dependabot/auto-merge-eligible \
-            -f description='Verified Dependabot patch or minor update' >/dev/null
+            -f description='Verified Dependabot version update' >/dev/null
           gh workflow run "$CALLBACK_WORKFLOW_FILE" \
             --repo "$GITHUB_REPOSITORY" --ref "$BASE_REF" \
             -f "pr_number=$PR_NUMBER" -f "head_sha=$PR_SHA"
@@ -123,7 +124,7 @@ jobs:
             sleep 5
           done
           if [ "$policy" != success ]; then
-            echo 'This commit has no verified patch/minor eligibility status.'
+            echo 'This commit has no verified Dependabot version-update eligibility status.'
             exit 0
           fi
 
@@ -380,7 +381,7 @@ jobs:
           done < <(jq -r '.[]' <<< "$AUTOFIX_WORKFLOWS")
 
           if [ "$policy" != success ]; then
-            echo 'Major or otherwise unqualified update remains for review.'
+            echo 'Update is not eligible for automatic merge.'
             exit 0
           fi
           owner=${GITHUB_REPOSITORY%%/*}
