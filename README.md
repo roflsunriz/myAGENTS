@@ -78,7 +78,7 @@ Three.js または Blender で参照画像から制作するときは、作業�
 
 ## Dependabot PR の自動処理
 
-`.github/workflows/dependabot-automation.yml` は、各リポジトリの PR 用 CI と組み合わせる再利用可能なワークフローです。Dependabot が署名した patch／minor 更新だけを対象にし、対象コミットの CI が成功した場合に squash merge します。CI が失敗した場合は失敗したジョブを 1 回だけ再実行します。対応するリポジトリでは、再失敗後に lockfile 等の指定ファイルだけを読み取り権限のジョブで再生成し、パッチを検証してからコミットします。修復できない場合は PR を残します。major 更新と CI のないリポジトリは自動マージしません。
+`.github/workflows/dependabot-automation.yml` は、各リポジトリの PR 用 CI と組み合わせる再利用可能なワークフローです。Dependabot が署名した patch／minor／major 更新を対象にし、対象コミットの CI が成功した場合に squash merge します。CI が失敗した場合は失敗したジョブを 1 回だけ再実行します。対応するリポジトリでは、再失敗後に lockfile 等の指定ファイルだけを読み取り権限のジョブで再生成し、パッチを検証してからコミットします。修復できない場合は PR を残します。CI のないリポジトリは自動マージしません。
 
 このリポジトリ自身は `.github/dependabot.yml` で GitHub Actions の更新を監視し、`.github/workflows/ci.yml` で actionlint を検証値付きの公式配布物から実行します。`.github/workflows/dependabot-pr.yml` が共通ワークフローを固定 SHA で呼び出します。
 
