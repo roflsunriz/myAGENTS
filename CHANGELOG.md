@@ -12,6 +12,9 @@
 
 ### Changed
 
+
+- 不具合・機能提案などの受付とPRの記入形式を揃え、プロジェクト固有の確認項目を残した。
+
 - CI の全チェックが成功した Dependabot の major 更新も自動マージ対象にした。
 - Dependabot の自動修復パッチ受け渡しを新しいランタイムに対応させるため、`actions/upload-artifact` を v4 から v7.0.1、`actions/download-artifact` を v4 から v8.0.1 へ更新した。主要版更新に伴う Node.js 24 対応とダウンロード時の検証強化を取り込んだ。
 - 共通ワークフローの正負判定と実 GitHub CI・PR マージ・callback の待機動作を追跡できるように、検証文書へ模擬 API と実行結果、引き続き確認する経路を記録した。
