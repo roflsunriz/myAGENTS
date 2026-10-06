@@ -10,6 +10,7 @@
 ## 方針
 
 - 共通ルールはこのリポジトリの `AGENTS.md` に集約する。
+- 会話や文書を自然な日本語に整える際は [yomiyasuに基づく原則](AGENTS.md#読みやすい日本語yomiyasuの原則) に従い、意味・条件・必要な詳細と、コードや引用の正確さを保つ。
 - サブエージェントのモデル選定は [AGENTS.md の「サブエージェント」](AGENTS.md#サブエージェント) に従う。大幅な時間短縮が見込める場合に委譲し、モデルの価格順位や役割を固定せず、実行環境と公式資料で利用可否・課金条件・推論設定を確認する。
 - SVG 制作時の追加指針は [svg/AGENTS.md](svg/AGENTS.md) で管理し、必要なプロジェクトから参照する。
 - Three.js / Blender で参照画像を再現する追加指針は [threejs-blender/AGENTS.md](threejs-blender/AGENTS.md) で管理する。
