@@ -39,6 +39,15 @@
 
 2026-09-23 に actionlint 1.7.12 と ShellCheck 0.11.0 を全ワークフローへ実行した。`process-classified` の模擬 GitHub API では、資格状態と CI 成功が揃う場合だけマージし、古い head SHA と失敗チェックではマージしないことを確認した。[共通 CI](https://github.com/roflsunriz/myAGENTS/actions/runs/35811234755) は成功した。実 PR では [CostCalculator #8](https://github.com/roflsunriz/CostCalculator/pull/8) が `github-actions[bot]` によりマージされた。分類後の [NyTweetDeck の workflow_dispatch](https://github.com/roflsunriz/NyTweetDeck/actions/runs/35813880729) も実際に起動し、CI が未完了の PR をマージせず待機した。CI 成功後の callback 単独マージは対象 PR 発生時に確認する。
 
+## 2026-10-15: Dependabot PR #6 の統合
+
+- [PR #6](https://github.com/roflsunriz/myAGENTS/pull/6) の差分と head `ec5695bd33e290d79f3b9de7c1aa35625c170940` の [CI 成功](https://github.com/roflsunriz/myAGENTS/actions/runs/38583911881) を確認し、main へ squash merge した。マージコミットは `92580c7726c4f1bb424983e7db1830d98bb2b645`。同コミットの [main CI](https://github.com/roflsunriz/myAGENTS/actions/runs/38673717343) も成功した。
+- 公式リリース API とタグを照合し、download-artifact v8.0.2、既に [PR #5](https://github.com/roflsunriz/myAGENTS/pull/5) で統合された upload-artifact v7.0.2、および checkout、fetch-metadata、setup-bun、actionlint が確認時点の最新リリースに対応することを確認した。GitHub Advisory API の全 Action 依存の照会では、該当する既知の脆弱性はなかった。Dependabot の未解決警告も0件だった。
+- 共通ワークフローと呼び出し先の固定 SHA の差分を確認し、更新が artifact Action 2件に限られることを確認した。このリポジトリ自身の呼び出し先を上記マージコミットへ進めた。
+- 公式リリース API の SHA-256 と照合した actionlint 1.7.12、ShellCheck 0.11.0 の Windows 配布物で、全3ワークフローをローカル検証した。構文・式・シェル検査と `git diff --check` は成功した。
+- 過去の [自動処理失敗ログ](https://github.com/roflsunriz/myAGENTS/actions/runs/38583943288) は、workflow ファイルを変更するマージが GitHub App の `workflows` 権限不足で拒否されたことを示していた。対象 CI は成功しており、今回は認証済み GitHub CLI でマージできた。自動処理の権限問題が解消したとは扱わず、同様の拒否時は対象 head の CI・差分を確認して、workflow の変更権限を持つ認証でマージする。
+- Code scanning の API は `no analysis found` を返したため、code scanning 済みとは扱わない。今回の更新では、意図的な CI 失敗と自動修復パッチ転送を伴う実地検証は行っていない。
+
 ## サブエージェント指針の内容確認
 
 [AGENTS.md の「サブエージェント」](AGENTS.md#サブエージェント) と README、更新手順、変更履歴を照合し、次のケースで判断が一貫することを確認する。

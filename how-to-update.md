@@ -33,6 +33,8 @@
 3. [検証手順](verification.md#dependabot-自動処理) で Action の構文と判定を確認し、このリポジトリ自身の `CI` も成功させてからコミット・push する。利用リポジトリの呼び出し先コミット SHA を新しい値に更新し、各 PR CI とマージ後に必要なデプロイ経路を確認する。
 4. 不具合時は利用リポジトリ側の呼び出し先 SHA を直前の検証済みコミットへ戻す。自動マージされた PR のソース変更が問題なら、通常の revert コミットで戻し、依存更新の原因を確認する。
 
+workflow ファイルを変更する PR のマージが `without workflows permission` で拒否された場合は、対象 head の CI と差分を確認し、workflow の変更権限を持つ認証済み GitHub CLI などでマージする。2026-10-15 にこのリポジトリで確認した制約とログの参照先は [検証手順](verification.md#2026-10-15-dependabot-pr-6-の統合) に記録している。マージ後にこのリポジトリ自身の呼び出し先 SHA も更新し、更新済み Action が実際に参照されることを確認する。
+
 ## 検証
 
 共通ルールと文書のみの変更では、[検証手順](verification.md) に従い、Markdown の内容、参照先、利用手順と Git 差分を確認する。PowerShell スクリプトを変更する場合は、構文と対象環境での動作も確認する。GitHub Actions の変更は actionlint で検証する。
