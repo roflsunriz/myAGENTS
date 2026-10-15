@@ -14,7 +14,7 @@
 - サブエージェントのモデル選定は [AGENTS.md の「サブエージェント」](AGENTS.md#サブエージェント) に従う。大幅な時間短縮が見込める場合に委譲し、モデルの価格順位や役割を固定せず、実行環境と公式資料で利用可否・課金条件・推論設定を確認する。
 - SVG 制作時の追加指針は [svg/AGENTS.md](svg/AGENTS.md) で管理し、必要なプロジェクトから参照する。
 - Three.js / Blender で参照画像を再現する追加指針は [threejs-blender/AGENTS.md](threejs-blender/AGENTS.md) で管理する。
-- 各プロジェクト固有の説明、起動方法、設計詳細、例外事項は各プロジェクトのローカル `AGENTS.md` に任せる。
+- 各プロジェクトのローカル `AGENTS.md` には純粋な指示とその説明を置く。構成・環境・コマンド・調査知見・例外の根拠は各プロジェクトの `findings.md` を正本とし、着手前に全文読む。
 - 変更履歴は Keep a Changelog 形式の `CHANGELOG.md` で管理する。
 - 更新手順は `how-to-update.md` またはプロジェクト事情に応じて `docs/UPDATE.md` にまとめる。
 - ドキュメントは初期セットアップ時と不足発見時に整備し、毎回の作業開始時・完了前に現状と照合して最新に保つ。具体的な義務と読み取り専用時の扱いは `AGENTS.md` の「ドキュメント」「ドキュメント更新」に従う。
@@ -38,7 +38,8 @@
 
 共通ルールは `COMMON-AGENTS.md` を必ず確認し、上位方針として扱う。
 
-このプロジェクト固有の情報を以下に記載する。
+共通指針の読了後、作業前に `findings.md` を先頭から末尾まで全文読む。
+純粋な指示とその説明だけをこのファイルに記載し、構成・環境・コマンド・調査知見は `findings.md` に記録する。
 ```
 
 ## SVG 制作で使う
@@ -83,7 +84,7 @@ Three.js または Blender で参照画像から制作するときは、作業�
 
 このリポジトリ自身は `.github/dependabot.yml` で GitHub Actions の更新を監視し、`.github/workflows/ci.yml` で actionlint を検証値付きの公式配布物から実行します。`.github/workflows/dependabot-pr.yml` が共通ワークフローを固定 SHA で呼び出します。
 
-このリポジトリでは、workflow ファイルを変更する Dependabot PR の自動マージが、GitHub App の `workflows` 権限不足で拒否されたことを確認しています。その場合は、対象 head の CI 成功と差分を確認し、workflow の変更権限を持つ認証でマージします。通常の `permissions` を広げるだけで解決したと扱わず、具体的な確認方法は [検証手順](verification.md#2026-10-15-dependabot-pr-6-の統合) を参照してください。
+workflow変更PRの権限に関する既知の制約と確認方法は [findings.md](findings.md#workflow変更prの権限制約) を参照してください。
 
 呼び出し側ではこのワークフローをコミット SHA に固定し、`pull_request_target` と PR 用 CI の `workflow_run` から呼び出します。分類が CI より遅れた場合も、分類後に呼び出し側の `workflow_dispatch` で同じ head SHA を再確認します。書き込み権限を持つ処理では PR のコードを実行せず、PR 作成者、リポジトリ、head SHA、Dependabot メタデータと CI 結果を検証します。修復後は `workflow_dispatch` の戻り値にある run ID を直接追跡して CI 成功を確認します。具体的な呼び出し設定、CI 名、マージ後のデプロイ起動は各リポジトリで管理します。
 
@@ -96,3 +97,7 @@ Three.js または Blender で参照画像から制作するときは、作業�
 - [セキュリティ方針](SECURITY.md)
 - [問い合わせ](SUPPORT.md)
 - [MIT ライセンス](LICENSE)
+
+## このリポジトリの運用知見
+
+固有の調査結果と運用上の制約は [findings.md](findings.md) にまとめています。共通指針の正本は `AGENTS.md`、用途別の追加指針は各サブディレクトリの `AGENTS.md` です。
