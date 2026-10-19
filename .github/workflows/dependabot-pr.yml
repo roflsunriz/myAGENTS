@@ -1,6 +1,9 @@
 name: Dependabot PR automation
 
 on:
+  schedule:
+    - cron: "0 9 28 * *"
+      timezone: "Asia/Tokyo"
   workflow_dispatch:
     inputs:
       pr_number:

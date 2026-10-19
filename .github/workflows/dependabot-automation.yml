@@ -33,6 +33,73 @@ on:
         type: string
 
 jobs:
+  process-month-end:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      actions: write
+      contents: write
+      pull-requests: write
+      statuses: read
+    steps:
+      - name: Merge ready Dependabot updates at month end
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CI_WORKFLOWS: ${{ inputs.ci_workflows }}
+          POST_MERGE_WORKFLOWS: ${{ inputs.post_merge_workflows }}
+        run: |
+          set -euo pipefail
+
+          pulls=$(gh api --method GET --paginate --slurp \
+            "repos/$GITHUB_REPOSITORY/pulls" \
+            -f state=open -f per_page=100)
+          mapfile -t prs < <(jq -r --arg repo "$GITHUB_REPOSITORY" \
+            'add | .[] |
+             select(.user.login == "dependabot[bot]" and
+                    .head.repo.full_name == $repo) |
+             [.created_at, (.number | tostring)] | @tsv' \
+            <<< "$pulls" | sort | cut -f2)
+
+          merge_failed=false
+          for pr in "${prs[@]}"; do
+            pr_json=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$pr")
+            sha=$(jq -r '.head.sha' <<< "$pr_json")
+            policy=$(gh api "repos/$GITHUB_REPOSITORY/commits/$sha/status" \
+              --jq '[.statuses[] | select(.context == "dependabot/auto-merge-eligible")][0].state // ""')
+            if [ "$policy" != success ]; then
+              echo "PR #$pr is not a verified Dependabot version update."
+              continue
+            fi
+
+            checks=$(gh pr checks "$pr" --repo "$GITHUB_REPOSITORY" \
+              --json name,bucket,workflow || true)
+            if [ -z "$checks" ] || ! jq -e --argjson names "$CI_WORKFLOWS" '
+              . as $checks |
+              all($names[]; . as $name |
+                any($checks[]; .workflow == $name and .bucket == "pass")) and
+              all($checks[]; .bucket == "pass" or .bucket == "skipping")
+            ' <<< "$checks" >/dev/null; then
+              echo "PR #$pr still has missing, pending, or failing checks."
+              continue
+            fi
+
+            if ! gh pr merge "$pr" --repo "$GITHUB_REPOSITORY" \
+              --squash --match-head-commit "$sha"; then
+              echo "PR #$pr could not be merged and remains open."
+              merge_failed=true
+              continue
+            fi
+
+            while IFS= read -r workflow; do
+              [ -z "$workflow" ] && continue
+              gh workflow run "$workflow" --repo "$GITHUB_REPOSITORY" \
+                --ref "$GITHUB_REF_NAME"
+            done < <(jq -r '.[]' <<< "$POST_MERGE_WORKFLOWS")
+          done
+
+          [ "$merge_failed" = false ]
+
   classify:
     if: >-
       github.event_name == 'pull_request_target' &&
@@ -128,6 +195,11 @@ jobs:
             exit 0
           fi
 
+          if [ "$(TZ=Asia/Tokyo date +%d)" -lt 28 ]; then
+            echo 'Automatic merge is deferred until the monthly window on or after the 28th in Japan.'
+            exit 0
+          fi
+
           checks=$(gh pr checks "$pr" --repo "$GITHUB_REPOSITORY" \
             --json name,bucket,workflow)
           if ! jq -e --argjson names "$CI_WORKFLOWS" '
@@ -198,6 +270,11 @@ jobs:
             echo 'CI is not yet fully green; workflow_run will recheck it.'
             exit 0
           }
+
+          if [ "$(TZ=Asia/Tokyo date +%d)" -lt 28 ]; then
+            echo 'Automatic merge is deferred until the monthly window on or after the 28th in Japan.'
+            exit 0
+          fi
 
           if ! gh pr merge "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" \
             --squash --match-head-commit "$PR_SHA"; then
@@ -382,6 +459,11 @@ jobs:
 
           if [ "$policy" != success ]; then
             echo 'Update is not eligible for automatic merge.'
+            exit 0
+          fi
+
+          if [ "$(TZ=Asia/Tokyo date +%d)" -lt 28 ]; then
+            echo 'Automatic merge is deferred until the monthly window on or after the 28th in Japan.'
             exit 0
           fi
           owner=${GITHUB_REPOSITORY%%/*}

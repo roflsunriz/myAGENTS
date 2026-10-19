@@ -210,7 +210,7 @@ bun run test
 
 - release workflow は `CHANGELOG.md` の対象 version を本文へ自動掲載する。
 - PR template、Issue template（bug-report、config、documentation）、Discussion template（general、ideas、q-a）、Dependabot、labeler を整備する。
-- Dependabot PR は CI 成功なら自動 merge し、失敗時は GitHub Copilot を使わない範囲で自動解決して merge する。
+- Dependabot の version update は毎月28日（Asia/Tokyo）にまとめて確認し、Dependabot PR は月末の自動処理でのみ merge する。CI 失敗時は GitHub Copilot を使わない範囲で自動解決し、同じ月末処理または次回の月末処理で merge する。
 
 ## 変更履歴
 
@@ -292,7 +292,7 @@ bun run test
 
 ## Dependabot PullRequestの指針
 
-- major も必要な code を直して、既存依存を壊さない最大 version まで更新する。CI 成功なら即 merge、失敗なら原因を修正して merge し、不要 remote branch を削除して main へ統合する。
+- major も必要な code を直して、既存依存を壊さない最大 version まで更新する。version update の作成と自動 merge は毎月28日（Asia/Tokyo）の月末処理へまとめる。CI 成功済みの PR だけを merge し、失敗は原因を修正して同じ月末処理または次回の月末処理で merge する。不要 remote branch は削除して main へ統合する。
 - 解決不能な open PR は放置せず、`@dependabot ignore this major version`／`minor version` 等で close し、更新可能になったら再度開く。
 
 ## CIの設計
