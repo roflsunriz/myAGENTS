@@ -195,8 +195,8 @@ jobs:
             exit 0
           fi
 
-          if [ "$(TZ=Asia/Tokyo date +%d)" -lt 28 ]; then
-            echo 'Automatic merge is deferred until the monthly window on or after the 28th in Japan.'
+          if [ "$(TZ=Asia/Tokyo date +%d%H%M)" -lt 281800 ]; then
+            echo 'Automatic merge is deferred until 18:00 on the 28th in Japan.'
             exit 0
           fi
 
@@ -271,8 +271,8 @@ jobs:
             exit 0
           }
 
-          if [ "$(TZ=Asia/Tokyo date +%d)" -lt 28 ]; then
-            echo 'Automatic merge is deferred until the monthly window on or after the 28th in Japan.'
+          if [ "$(TZ=Asia/Tokyo date +%d%H%M)" -lt 281800 ]; then
+            echo 'Automatic merge is deferred until 18:00 on the 28th in Japan.'
             exit 0
           fi
 
@@ -462,8 +462,8 @@ jobs:
             exit 0
           fi
 
-          if [ "$(TZ=Asia/Tokyo date +%d)" -lt 28 ]; then
-            echo 'Automatic merge is deferred until the monthly window on or after the 28th in Japan.'
+          if [ "$(TZ=Asia/Tokyo date +%d%H%M)" -lt 281800 ]; then
+            echo 'Automatic merge is deferred until 18:00 on the 28th in Japan.'
             exit 0
           fi
           owner=${GITHUB_REPOSITORY%%/*}
