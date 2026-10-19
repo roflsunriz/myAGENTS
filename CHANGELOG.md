@@ -6,6 +6,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- 同じブランチまたはPull Requestの古いCIを新しい実行で取り消し、最新の共通workflow検証を優先するようにした。
+
 ### Fixed
 
 - CI と Dependabot の分類の実行順が前後しても更新を取りこぼさないよう、同じ PR 番号と head SHA を再照合する経路を追加した。
