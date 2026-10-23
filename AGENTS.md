@@ -97,6 +97,7 @@
 - storage には自動 migration、schema／data version 検査、破損 data の強制 recovery を実装する。新 data model では旧 data を曖昧に互換扱いせず、原則、明示的な強制 migration 対象にする。
 - 不要 code、dead code、使われない互換処理は削除し、必要十分で保守しやすい状態を保つ。
 - Web は Chrome／Chromium 独自命令を避け、MDN に記載された複数 browser 対応の標準技術を優先する。
+- 値を受け取る時はバリデーションとサニタイズをする。
 
 ## 最小実装と過剰設計の抑制
 
@@ -303,3 +304,4 @@ bun run test
 
 - GitHub CLI、npm CLI 等の認証 command は原則昇格して使う。非昇格時の「token 失効」をそのまま信じない。昇格後も失効していれば、認証 page を CDP／RDP で開くなど、ユーザーがすぐ再認証できる状態を整える。
 - `Get-Command ffmpeg` 等で解決しなくても安易に PATH 不在と判断せず、昇格 PowerShell でも確認する。
+- GithubのCIがBilling/Paymentで止められている場合、その月いっぱいまでリモートCIの例外規定を適用する。つまりリモートCIはローカルCIで代用する。
