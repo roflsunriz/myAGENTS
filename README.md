@@ -84,7 +84,7 @@ Three.js または Blender で参照画像から制作するときは、作業�
 
 このリポジトリ自身は `.github/dependabot.yml` で GitHub Actions の更新を監視し、`.github/workflows/ci.yml` で actionlint を検証値付きの公式配布物から実行します。`.github/workflows/dependabot-pr.yml` が共通ワークフローを固定 SHA で呼び出します。
 
-workflow変更PRの権限に関する既知の制約と確認方法は [findings.md](findings.md#workflow変更prの権限制約) を参照してください。
+このリポジトリでは、workflow ファイルを変更する Dependabot PR の自動マージが、GitHub App の `workflows` 権限不足で拒否されたことを確認しています。その場合は、対象 head の CI 成功と差分を確認し、workflow の変更権限を持つ認証でマージします。通常の `permissions` を広げるだけで解決したと扱わず、具体的な確認方法は [検証手順](verification.md#2026-10-15-dependabot-pr-6-の統合) を参照してください。
 
 呼び出し側ではこのワークフローをコミット SHA に固定し、`pull_request_target`、PR 用 CI の `workflow_run`、毎月28日18:00（Asia/Tokyo）の `schedule` から呼び出します。分類が CI より遅れた場合も、分類後に呼び出し側の `workflow_dispatch` で同じ head SHA を再確認します。書き込み権限を持つ処理では PR のコードを実行せず、PR 作成者、リポジトリ、head SHA、Dependabot メタデータと CI 結果を検証します。修復後は `workflow_dispatch` の戻り値にある run ID を直接追跡して CI 成功を確認します。具体的な呼び出し設定、CI 名、マージ後のデプロイ起動は各リポジトリで管理します。
 
