@@ -285,7 +285,7 @@ bun run test
 
 ## ReVanced
 
-- release workflow で ReVanced API 形式の `patches.json` を出力する。全 release を調べ、欠けていれば昇格した GitHub CLI で追加する。README に `github.com` page ではなく実体 URL を copy 可能な形で載せる。
+- release workflow で ReVanced API 形式の `patches.json` を出力する。全 release を調べ、欠けていれば昇格した GitHub CLI で追加する。README に `github.com` page ではなく実体 URL (raw.githubusercontent.com) を copy 可能な形で載せる。
 - RVP に Android 用 `.class` DEX を含め、`EmptyMultiDexContainerException` を防ぐ。
 - Android ReVanced Manager へ `patches.json` を登録して読込 error がないこと、RVP 適用が install 直前まで進むことを実機で確認する。install はユーザー承認を得る。
 - version に依存せず適用・使用できることを確認し、実機・repository に中間生成物を残さない。
